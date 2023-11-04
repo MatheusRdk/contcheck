@@ -1,0 +1,21 @@
+server:
+  error:
+    include-stacktrace: on_param
+
+spring:
+  application:
+    name: builders-project
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+
+  info:
+    env:
+      enabled: true
+
+info:
+  app: ContCheck by Matheus Rudek
+  github: https://github.com/MatheusRdk/
