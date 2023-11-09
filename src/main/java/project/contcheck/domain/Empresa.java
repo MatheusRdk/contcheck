@@ -1,14 +1,17 @@
 package project.contcheck.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "Empresa")
 public class Empresa {
@@ -16,9 +19,11 @@ public class Empresa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotEmpty(message = "A empresa deve ter um cnpj")
+    @Size(min = 14, max = 14, message = "O CNPJ deve ter exatamente 14 caracteres")
+    @Column(unique = true)
     private String cnpj;
 
-    @NotNull
+    @NotEmpty(message = "A empresa deve ter um nome")
     private String nome;
 }
