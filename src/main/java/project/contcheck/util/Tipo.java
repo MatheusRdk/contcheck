@@ -10,4 +10,13 @@ public enum Tipo {
     FISCAL,
     @Enumerated(EnumType.STRING)
     FOLHA;
+
+    public static Tipo fromString(String tipo) {
+        for (Tipo t : values()) {
+            if (t.name().equalsIgnoreCase(tipo)) {
+                return t;
+            }
+        }
+        throw new IllegalArgumentException("Tipo inválido: " + tipo);
+    }
 }
