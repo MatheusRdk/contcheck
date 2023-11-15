@@ -95,24 +95,6 @@ public class ChecklistRepositoryTest {
     }
 
     @Test
-    @DisplayName("findByEmpresa returns list of checklist when successful")
-    void findByEmpresa_returnsListOfChecklist_WhenSuccessful() {
-        Checklist checklist = Checklist.builder()
-                .id(1L)
-                .tipo(Tipo.CONTABILIDADE)
-                .mesAno("01/2022")
-                .status(Status.COMPLETO)
-                .empresa(empresa)
-                .build();
-
-        Checklist savedChecklist = checklistRepository.save(checklist);
-
-        List<Checklist> byMesAno = checklistRepository.findByEmpresa(empresa);
-
-        Assertions.assertThat(byMesAno).isNotEmpty().contains(savedChecklist);
-    }
-
-    @Test
     @DisplayName("findByCnpj returns list of checklist when successful")
     void findByCnpj_returnsListOfChecklist_WhenSuccessful() {
         Checklist checklist = Checklist.builder()

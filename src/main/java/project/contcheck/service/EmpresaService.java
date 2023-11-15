@@ -2,8 +2,9 @@ package project.contcheck.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import project.contcheck.domain.Empresa;
-import project.contcheck.dto.EmpresaPostResponseBody;
+import project.contcheck.dto.EmpresaPostRequestBody;
 import project.contcheck.exceptions.EmpresaNotFoundException;
 import project.contcheck.repositorys.EmpresaRepository;
 
@@ -23,11 +24,11 @@ public class EmpresaService {
         return empresaRepository.findByNome(nome);
     }
 
-    public List<Empresa> findByCnpj(String cnpj){
+    public List<Empresa> findEmpresaByCnpj(String cnpj){
         return empresaRepository.findByCnpj(cnpj);
     }
 
-    public Empresa save(EmpresaPostResponseBody empresaPostResponseBody){
+    public Empresa save(EmpresaPostRequestBody empresaPostResponseBody){
         final var empresa = Empresa.builder()
                 .cnpj(empresaPostResponseBody.cnpj())
                 .nome(empresaPostResponseBody.nome())
@@ -36,6 +37,7 @@ public class EmpresaService {
         return empresaRepository.save(empresa);
     }
 
+    @Transactional
     public void deleteByCnpj(String cnpj){
         int registrosAfetados = empresaRepository.deleteByCnpj(cnpj);
         if (registrosAfetados == 0){
@@ -43,6 +45,7 @@ public class EmpresaService {
         }
     }
 
+    @Transactional
     public void updateNomePorCnpj(String cnpj, String nome){
         int registrosAfetados = empresaRepository.updateNome(cnpj, nome);
         if (registrosAfetados == 0){
@@ -50,6 +53,7 @@ public class EmpresaService {
         }
     }
 
+    @Transactional
     public void updateCnpj(String cnpjNovo, String cnpjAntigo){
         int registrosAfetados = empresaRepository.updateCnpj(cnpjNovo, cnpjAntigo);
         if (registrosAfetados == 0){

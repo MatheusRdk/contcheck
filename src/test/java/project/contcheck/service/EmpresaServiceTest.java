@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import project.contcheck.domain.Empresa;
-import project.contcheck.dto.EmpresaPostResponseBody;
+import project.contcheck.dto.EmpresaPostRequestBody;
 import project.contcheck.exceptions.EmpresaNotFoundException;
 import project.contcheck.repositorys.EmpresaRepository;
 
@@ -72,10 +72,10 @@ public class EmpresaServiceTest {
     }
 
     @Test
-    @DisplayName("findByCnpj returns list of empresa when successful")
+    @DisplayName("findEmpresaByCnpj returns list of empresa when successful")
     void findByCnpj_ReturnsListOfEmpresa_WhenSuccessful() {
         String expectedName = "Teste";
-        List<Empresa> empresaList = empresaService.findByCnpj("12345678912345");
+        List<Empresa> empresaList = empresaService.findEmpresaByCnpj("12345678912345");
 
         Assertions.assertThat(empresaList).isNotNull();
         Assertions.assertThat(empresaList).isNotEmpty().hasSize(1);
@@ -85,8 +85,8 @@ public class EmpresaServiceTest {
     @Test
     @DisplayName("save returns empresa when successful")
     void save_ReturnsEmpresa_WhenSuccessful() {
-        EmpresaPostResponseBody empresaPostResponseBody = new EmpresaPostResponseBody("12345678912345", "Teste");
-        Empresa empresa = empresaService.save(empresaPostResponseBody);
+        EmpresaPostRequestBody empresaPostRequestBody = new EmpresaPostRequestBody("12345678912345", "Teste");
+        Empresa empresa = empresaService.save(empresaPostRequestBody);
 
         Assertions.assertThat(empresa).isNotNull().isEqualTo(Empresa.builder().nome("Teste").cnpj("12345678912345").id(1L).build());
     }
