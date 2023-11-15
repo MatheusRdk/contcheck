@@ -1,0 +1,1 @@
+ALTER TABLE checklist ADD CONSTRAINT formato_mes_ano CHECK (mes_ano REGEXP '^(0[1-9]|1[0-2])\/[0-9]{4}$');

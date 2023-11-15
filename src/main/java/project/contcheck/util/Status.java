@@ -8,4 +8,13 @@ public enum Status {
     COMPLETO,
     @Enumerated(EnumType.STRING)
     INCOMPLETO;
+
+    public static Status fromString(String status) {
+        for (Status s : values()) {
+            if (s.name().equalsIgnoreCase(status)) {
+                return s;
+            }
+        }
+        throw new IllegalArgumentException("Status inválido: " + status);
+    }
 }

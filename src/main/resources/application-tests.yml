@@ -1,0 +1,34 @@
+server:
+  error:
+    include-stacktrace: on_param
+
+spring:
+  profiles: test
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;INIT=RUNSCRIPT FROM 'classpath:import.sql'
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    h2:
+      console:
+        enabled: true
+      flyway:
+        enabled: false
+      compatibilityMode: MYSQL
+      collation: NO_CASE
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+
+  info:
+    env:
+      enabled: true
+
+info:
+  app: ContCheck by Matheus Rudek
+  github: https://github.com/MatheusRdk/
