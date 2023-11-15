@@ -1,7 +1,5 @@
 package project.contcheck.repository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,10 +24,6 @@ import java.util.Optional;
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ChecklistRepositoryTest {
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @Autowired
     private ChecklistRepository checklistRepository;
 
@@ -37,6 +31,7 @@ public class ChecklistRepositoryTest {
     private EmpresaRepository empresaRepository;
 
     private Empresa empresa;
+
     @BeforeEach
     void setup() {
         empresa = Empresa.builder()
@@ -49,7 +44,7 @@ public class ChecklistRepositoryTest {
 
     @Test
     @DisplayName("findByTipo returns list of checklist when successful")
-    void findByTipo_returnsListOfChecklist_WhenSuccessful(){
+    void findByTipo_returnsListOfChecklist_WhenSuccessful() {
         Checklist checklist = Checklist.builder()
                 .id(1L)
                 .tipo(Tipo.CONTABILIDADE)
@@ -66,7 +61,7 @@ public class ChecklistRepositoryTest {
 
     @Test
     @DisplayName("findByMesAno returns list of checklist when successful")
-    void findByMesAno_returnsListOfChecklist_WhenSuccessful(){
+    void findByMesAno_returnsListOfChecklist_WhenSuccessful() {
         Checklist checklist = Checklist.builder()
                 .id(1L)
                 .tipo(Tipo.CONTABILIDADE)
@@ -83,7 +78,7 @@ public class ChecklistRepositoryTest {
 
     @Test
     @DisplayName("findByStatus returns list of checklist when successful")
-    void findByStatus_returnsListOfChecklist_WhenSuccessful(){
+    void findByStatus_returnsListOfChecklist_WhenSuccessful() {
         Checklist checklist = Checklist.builder()
                 .id(1L)
                 .tipo(Tipo.CONTABILIDADE)
@@ -101,7 +96,7 @@ public class ChecklistRepositoryTest {
 
     @Test
     @DisplayName("findByEmpresa returns list of checklist when successful")
-    void findByEmpresa_returnsListOfChecklist_WhenSuccessful(){
+    void findByEmpresa_returnsListOfChecklist_WhenSuccessful() {
         Checklist checklist = Checklist.builder()
                 .id(1L)
                 .tipo(Tipo.CONTABILIDADE)
@@ -119,7 +114,7 @@ public class ChecklistRepositoryTest {
 
     @Test
     @DisplayName("findByCnpj returns list of checklist when successful")
-    void findByCnpj_returnsListOfChecklist_WhenSuccessful(){
+    void findByCnpj_returnsListOfChecklist_WhenSuccessful() {
         Checklist checklist = Checklist.builder()
                 .id(1L)
                 .tipo(Tipo.CONTABILIDADE)
@@ -136,7 +131,7 @@ public class ChecklistRepositoryTest {
 
     @Test
     @DisplayName("Delete removes checklist when succesful")
-    void delete_RemovesChecklist_WhenSuccessful(){
+    void delete_RemovesChecklist_WhenSuccessful() {
         Checklist checklistToBeSaved = Checklist.builder()
                 .tipo(Tipo.CONTABILIDADE)
                 .mesAno("01/2022")
@@ -152,10 +147,33 @@ public class ChecklistRepositoryTest {
     }
 
     @Test
-    @DisplayName("Save persists checklist when succesful")
-    void save_PersistsChecklist_WhenSuccessful(){
+    @DisplayName("deleteByCnpj removes list of checklist when successful")
+    void deleteByCnpj_RemovesChecklist_WhenSuccessful() {
         Checklist checklist = Checklist.builder()
-                .id(1L)
+                .tipo(Tipo.CONTABILIDADE)
+                .mesAno("01/2022")
+                .empresa(empresa)
+                .build();
+
+        Checklist checklist2 = Checklist.builder()
+                .tipo(Tipo.FOLHA)
+                .mesAno("01/2022")
+                .empresa(empresa)
+                .build();
+
+        Checklist savedChecklist = checklistRepository.save(checklist);
+        Checklist savedChecklist2 = checklistRepository.save(checklist2);
+
+        int deleted = checklistRepository.deleteAllByCnpj("12345678912345");
+
+        Assertions.assertThat(deleted).isEqualTo(2);
+        Assertions.assertThat(checklistRepository.findByCnpj("12345678912345").size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("Save persists checklist when succesful")
+    void save_PersistsChecklist_WhenSuccessful() {
+        Checklist checklist = Checklist.builder()
                 .tipo(Tipo.CONTABILIDADE)
                 .mesAno("01/2022")
                 .empresa(empresa)
@@ -165,14 +183,13 @@ public class ChecklistRepositoryTest {
 
         Assertions.assertThat(savedChecklist).isNotNull();
         Assertions.assertThat(savedChecklist.getId()).isNotNull();
-        Assertions.assertThat(savedChecklist.getId()).isEqualTo(checklist.getId());
         Assertions.assertThat(savedChecklist.getMesAno()).isEqualTo(checklist.getMesAno());
     }
 
     @Test
     @DisplayName("Save throw DataIntegrityViolationException when empresa_id, tipo and mes_ano already exists")
-    //This means that we cannot insert a new record of the same period and type for a company that already has this record.
-    void save_ThrowDataIntegrityViolationException_WhenEmpresaMesAnoAndTipoAlreadyExists(){
+        //This means that we cannot insert a new record of the same period and type for a company that already has this record.
+    void save_ThrowDataIntegrityViolationException_WhenEmpresaMesAnoAndTipoAlreadyExists() {
         Checklist checklist1 = Checklist.builder()
                 .tipo(Tipo.CONTABILIDADE)
                 .status(Status.COMPLETO)
@@ -182,7 +199,7 @@ public class ChecklistRepositoryTest {
 
         Checklist savedChecklist = checklistRepository.save(checklist1);
 
-        Checklist checklist2= Checklist.builder()
+        Checklist checklist2 = Checklist.builder()
                 .tipo(Tipo.CONTABILIDADE)
                 .status(Status.INCOMPLETO)
                 .mesAno("01/2022")
@@ -196,7 +213,7 @@ public class ChecklistRepositoryTest {
 
     @Test
     @DisplayName("Save persists checklist and throw nothing when empresa_id and mes_ano already exists, but tipo is new")
-    void save_PersistsChecklistAndThrowNothing_WhenEmpresaAndMesAnoExistsButTipoDont(){
+    void save_PersistsChecklistAndThrowNothing_WhenEmpresaAndMesAnoExistsButTipoDont() {
         Checklist checklist1 = Checklist.builder()
                 .tipo(Tipo.CONTABILIDADE)
                 .status(Status.COMPLETO)
@@ -206,7 +223,7 @@ public class ChecklistRepositoryTest {
 
         Checklist savedChecklist = checklistRepository.save(checklist1);
 
-        Checklist checklist2= Checklist.builder()
+        Checklist checklist2 = Checklist.builder()
                 .tipo(Tipo.FOLHA)
                 .status(Status.COMPLETO)
                 .mesAno("01/2022")
@@ -228,8 +245,8 @@ public class ChecklistRepositoryTest {
     }
 
     @Test
-    @DisplayName("Save throw constraint when the mes_ano format is different from month/year")
-    void save_ThrowConstrainy_WhenEmpresaMesAnoAndTipoAlreadyExists(){
+    @DisplayName("Save throw DataIntegrityViolationException when the mes_ano format is different from month/year")
+    void save_ThrowDataIntegrityViolationException_WhenMesAnoIsWrongFormat() {
         Checklist checklist = Checklist.builder()
                 .tipo(Tipo.CONTABILIDADE)
                 .status(Status.COMPLETO)
@@ -237,7 +254,25 @@ public class ChecklistRepositoryTest {
                 .empresa(empresa)
                 .build();
 
+        Checklist checklist2 = Checklist.builder()
+                .tipo(Tipo.CONTABILIDADE)
+                .status(Status.COMPLETO)
+                .mesAno("1/2022")
+                .empresa(empresa)
+                .build();
+
+        Checklist checklist3 = Checklist.builder()
+                .tipo(Tipo.CONTABILIDADE)
+                .status(Status.COMPLETO)
+                .mesAno("2022/01")
+                .empresa(empresa)
+                .build();
+
         Assertions.assertThatExceptionOfType(DataIntegrityViolationException.class)
                 .isThrownBy(() -> checklistRepository.save(checklist));
+        Assertions.assertThatExceptionOfType(DataIntegrityViolationException.class)
+                .isThrownBy(() -> checklistRepository.save(checklist2));
+        Assertions.assertThatExceptionOfType(DataIntegrityViolationException.class)
+                .isThrownBy(() -> checklistRepository.save(checklist3));
     }
 }
