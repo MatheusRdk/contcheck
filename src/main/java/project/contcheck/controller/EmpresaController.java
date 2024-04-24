@@ -71,7 +71,7 @@ public class EmpresaController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping
+    @PutMapping(path = "/updateNome")
     @Operation(summary = "Update empresa nome by cnpj")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Successful operation, updated"),
@@ -81,7 +81,7 @@ public class EmpresaController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping
+    @PutMapping(path = "/updateCnpj")
     @Operation(summary = "Update empresa cnpj by cnpj")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Successful operation, updated"),
