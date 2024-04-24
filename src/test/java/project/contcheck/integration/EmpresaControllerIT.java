@@ -35,6 +35,7 @@ public class EmpresaControllerIT {
     @Autowired
     private DataSource dataSource;
 
+    //TODO Fix this integration test and create others, this is using the mariadb instance instead of h2, it should use h2.
     @Test
     public void testDataSource() throws SQLException {
         System.out.println("DataSource URL: " + dataSource.getConnection().getMetaData().getURL());
