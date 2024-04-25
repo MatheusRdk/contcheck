@@ -1,59 +1,52 @@
 package project.contcheck.config;
 
 import com.zaxxer.hikari.HikariDataSource;
-import jakarta.persistence.EntityManagerFactory;
+import org.hibernate.cfg.Environment;
+import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
+import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
+import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import project.contcheck.ContcheckApplication;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @EnableJpaRepositories("project.contcheck.repositorys")
 @EnableTransactionManagement
 public class SpringDataConfig {
     @Bean
-    public DataSource dataSource(){
+    public DataSource dataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setUsername("root");
-        ds.setPassword("root");
-        ds.setJdbcUrl("jdbc:mariadb://localhost:3306/contcheck");
-        ds.setDriverClassName("org.mariadb.jdbc.Driver");
+        ds.setUsername("postgres");
+        ds.setPassword("admin");
+        ds.setJdbcUrl("jdbc:postgresql://localhost:5432/contcheck");
+        ds.setDriverClassName("org.postgresql.Driver");
         return ds;
     }
 
     @Bean
-    public EntityManagerFactory entityManagerFactory() {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource, JpaProperties jpaProperties,
+                                                                       MultiTenantConnectionProvider multiTenantConnectionProvider, CurrentTenantIdentifierResolver tenantIdentifierResolver) {
 
-        LocalContainerEntityManagerFactoryBean factory =
-                new LocalContainerEntityManagerFactoryBean();
-
-        HibernateJpaVendorAdapter vendorAdapter =
-                new HibernateJpaVendorAdapter();
+        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setGenerateDdl(false);
         vendorAdapter.setShowSql(true);
+        em.setDataSource(dataSource);
+        em.setPackagesToScan(ContcheckApplication.class.getPackage().getName());
+        em.setJpaVendorAdapter(vendorAdapter);
 
-        factory.setDataSource(dataSource());
-        factory.setJpaVendorAdapter(vendorAdapter);
-        factory.setPackagesToScan("project.contcheck.domain");
-        factory.afterPropertiesSet();
-
-        return factory.getObject();
-    }
-
-    @Bean
-    public PlatformTransactionManager transactionManager() {
-
-        JpaTransactionManager manager = new JpaTransactionManager();
-        manager.setEntityManagerFactory(entityManagerFactory());
-        manager.setJpaDialect(new HibernateJpaDialect());
-
-        return manager;
+        Map<String, Object> jpaPropertiesMap = new HashMap<>(jpaProperties.getProperties());
+        jpaPropertiesMap.put(Environment.MULTI_TENANT_CONNECTION_PROVIDER, multiTenantConnectionProvider);
+        jpaPropertiesMap.put(Environment.MULTI_TENANT_IDENTIFIER_RESOLVER, tenantIdentifierResolver);
+        em.setJpaPropertyMap(jpaPropertiesMap);
+        return em;
     }
 }
