@@ -12,7 +12,7 @@ public class FlywayConfig {
     @Bean
     public Flyway flyway(DataSource dataSource){
         Flyway flyway = Flyway.configure()
-                .locations("./db/migration/default")
+                .locations("db/migration/default")
                 .dataSource(dataSource)
                 .schemas(TenantIdentifierResolver.DEFAULT_TENANT)
                 .load();
@@ -26,7 +26,7 @@ public class FlywayConfig {
             repository.findAll().forEach(user -> {
                 String tenant = user.getUsername();
                 Flyway flyway = Flyway.configure()
-                        .locations("./db/migration/tenants")
+                        .locations("db/migration/tenants")
                         .dataSource(dataSource)
                         .schemas(tenant)
                         .load();

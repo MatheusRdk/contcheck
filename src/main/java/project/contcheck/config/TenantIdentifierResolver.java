@@ -14,7 +14,7 @@ import java.util.function.Predicate;
 
 @Component
 public class TenantIdentifierResolver implements CurrentTenantIdentifierResolver {
-    static final String DEFAULT_TENANT = "default";
+    static final String DEFAULT_TENANT = "padrao";
 
     @Override
     public @UnknownKeyFor @NonNull @Initialized String resolveCurrentTenantIdentifier() {

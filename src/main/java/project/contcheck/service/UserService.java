@@ -17,9 +17,10 @@ public class UserService implements UserDetailsService {
     private PasswordEncoder encoder;
     private TenantService tenantService;
 
-    public UserService(UserRepository repository) {
+    public UserService(UserRepository repository, TenantService tenantService) {
         this.userRepository = repository;
         this.encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        this.tenantService = tenantService;
     }
 
     @Transactional
