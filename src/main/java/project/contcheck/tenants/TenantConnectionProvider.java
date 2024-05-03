@@ -1,4 +1,4 @@
-package project.contcheck.config;
+package project.contcheck.tenants;
 
 import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
 import org.springframework.stereotype.Component;
@@ -28,17 +28,15 @@ public class TenantConnectionProvider implements MultiTenantConnectionProvider {
     @Override
     public Connection getConnection(String tenantIdentifier) throws SQLException {
         final Connection connection = getAnyConnection();
-        connection.createStatement()
-                .execute(String.format("SET search_path TO \"%s\";", tenantIdentifier));
+        connection.setSchema(tenantIdentifier);
+
         return connection;
     }
 
     @Override
     public void releaseConnection(String tenantIdentifier, Connection connection) throws SQLException {
-        connection.createStatement()
-                .execute(String.format("SET search_path TO \"%s\";", TenantIdentifierResolver.DEFAULT_TENANT));
+        connection.setSchema(tenantIdentifier);
         releaseAnyConnection(connection);
-
     }
 
     @Override

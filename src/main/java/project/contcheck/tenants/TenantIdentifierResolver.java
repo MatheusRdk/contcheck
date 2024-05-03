@@ -1,4 +1,4 @@
-package project.contcheck.config;
+package project.contcheck.tenants;
 
 import org.checkerframework.checker.initialization.qual.Initialized;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -14,7 +14,7 @@ import java.util.function.Predicate;
 
 @Component
 public class TenantIdentifierResolver implements CurrentTenantIdentifierResolver {
-    static final String DEFAULT_TENANT = "padrao";
+    static final String DEFAULT_TENANT = "public";
 
     @Override
     public @UnknownKeyFor @NonNull @Initialized String resolveCurrentTenantIdentifier() {

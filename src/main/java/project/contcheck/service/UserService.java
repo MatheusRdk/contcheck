@@ -3,11 +3,11 @@ package project.contcheck.service;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.contcheck.config.TenantService;
+import project.contcheck.tenants.TenantService;
 import project.contcheck.domain.User;
 import project.contcheck.repositorys.UserRepository;
 
@@ -19,7 +19,7 @@ public class UserService implements UserDetailsService {
 
     public UserService(UserRepository repository, TenantService tenantService) {
         this.userRepository = repository;
-        this.encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        this.encoder = new BCryptPasswordEncoder();
         this.tenantService = tenantService;
     }
 

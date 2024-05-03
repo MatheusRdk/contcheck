@@ -1,4 +1,4 @@
-package project.contcheck.config;
+package project.contcheck.tenants;
 
 import org.flywaydb.core.Flyway;
 import org.springframework.stereotype.Component;

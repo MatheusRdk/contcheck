@@ -19,3 +19,6 @@ logging:
 info:
   app: ContCheck by Matheus Rudek
   github: https://github.com/MatheusRdk/
+
+security:
+  enabled: true
