@@ -14,10 +14,22 @@ import java.util.function.Predicate;
 
 @Component
 public class TenantIdentifierResolver implements CurrentTenantIdentifierResolver {
-    static final String DEFAULT_TENANT = "public";
+    static final String DEFAULT_TENANT = "default";
+    private static final ThreadLocal<Boolean> forceDefault = new ThreadLocal<>();
+
+    public void forceDefaultSchema() {
+        forceDefault.set(true);
+    }
+
+    public void resetForcedDefaultSchema() {
+        forceDefault.remove();
+    }
 
     @Override
     public @UnknownKeyFor @NonNull @Initialized String resolveCurrentTenantIdentifier() {
+        if (Boolean.TRUE.equals(forceDefault.get())) {
+            return DEFAULT_TENANT;
+        }
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
                 .filter(Predicate.not(authentication -> authentication instanceof AnonymousAuthenticationToken))
                 .map(Principal::getName)

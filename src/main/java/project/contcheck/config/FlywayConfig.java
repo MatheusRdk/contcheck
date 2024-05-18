@@ -1,13 +1,20 @@
 package project.contcheck.config;
 
 import org.flywaydb.core.Flyway;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import project.contcheck.repositorys.UserRepository;
+import project.contcheck.tenants.TenantIdentifierResolver;
 
 import javax.sql.DataSource;
 
+@Configuration
 public class FlywayConfig {
+
+    @Autowired
+    TenantIdentifierResolver tenantIdentifierResolver;
 
     @Bean
     public Flyway flyway(DataSource dataSource){
@@ -22,6 +29,7 @@ public class FlywayConfig {
 
     @Bean
     CommandLineRunner commandLineRunner(UserRepository repository, DataSource dataSource) {
+        tenantIdentifierResolver.forceDefaultSchema();
         return args -> {
             repository.findAll().forEach(user -> {
                 String tenant = user.getUsername();
@@ -32,6 +40,7 @@ public class FlywayConfig {
                         .load();
                 flyway.migrate();
             });
+            tenantIdentifierResolver.resetForcedDefaultSchema();
         };
     }
 }
